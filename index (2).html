@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess The Phrase</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#ff4d6d,#ff758f,#ff8fa3);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    color:white;
+}
+
+.card{
+    width:100%;
+    max-width:550px;
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(12px);
+    border-radius:24px;
+    padding:30px 20px;
+    text-align:center;
+}
+
+h1{
+    font-size:2rem;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    opacity:.95;
+    margin-bottom:25px;
+}
+
+.word{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:25px;
+}
+
+.letter{
+    width:42px;
+    height:52px;
+    border-bottom:3px solid white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.5rem;
+    font-weight:700;
+}
+
+.space{
+    width:18px;
+}
+
+.keyboard{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+}
+
+button{
+    border:none;
+    border-radius:12px;
+    padding:12px;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:600;
+}
+
+.letter-btn{
+    background:white;
+    color:#d6336c;
+}
+
+.letter-btn:disabled{
+    opacity:.35;
+}
+
+.page{
+    display:none;
+}
+
+.active{
+    display:block;
+}
+
+.big-question{
+    font-size:2rem;
+    margin-bottom:20px;
+}
+
+.message{
+    line-height:1.7;
+    margin-bottom:30px;
+}
+
+.choice-buttons{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+}
+
+.yes{
+    background:#e63946;
+    color:white;
+    padding:15px 35px;
+}
+
+.no{
+    background:white;
+    color:#e63946;
+    padding:15px 35px;
+}
+
+.result{
+    margin-top:25px;
+    font-size:1.2rem;
+}
+
+/* KEY FIX: keep BOYFRIEND on one line */
+.word.no-wrap{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    justify-content:center;
+    -webkit-overflow-scrolling:touch;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <!-- PAGE 1 -->
+    <div id="gamePage" class="active">
+
+        <h1>Guess The Phrase</h1>
+        <p class="subtitle">There's something I want to ask you.</p>
+
+        <div class="word no-wrap" id="word"></div>
+
+        <div class="keyboard" id="keyboard"></div>
+
+    </div>
+
+    <!-- PAGE 2 -->
+    <div id="questionPage" class="page">
+
+        <h1 class="big-question">Can I Be Your Boyfriend?</h1>
+
+       <p class="message">
+            I know it's a little early, and I know we still have a lot more
+            memories to make together. But every day we talk, I find myself
+            liking you more and more. You make my days better, my thoughts
+            happier, and honestly I don't want to keep pretending this is
+            just another question.
+            <br><br>
+            So I figured I'd ask.
+        </p>
+
+        <div class="choice-buttons">
+            <button class="yes" onclick="yesAnswer()">Yes</button>
+            <button class="no" onclick="noAnswer()">No</button>
+        </div>
+
+        <div class="result" id="result"></div>
+
+    </div>
+
+</div>
+
+<script>
+const phrase = "CAN I BE YOUR BOYFRIEND";
+let guessed = [];
+
+const wordContainer = document.getElementById("word");
+const keyboard = document.getElementById("keyboard");
+
+function renderWord(){
+    wordContainer.innerHTML = "";
+
+    let solved = true;
+
+    phrase.split("").forEach(char => {
+
+        const div = document.createElement("div");
+
+        if(char === " "){
+            div.className = "space";
+        } else {
+            div.className = "letter";
+
+            if(guessed.includes(char)){
+                div.textContent = char;
+            } else {
+                solved = false;
+            }
+        }
+
+        wordContainer.appendChild(div);
+    });
+
+    if(solved){
+        setTimeout(() => {
+            document.getElementById("gamePage").classList.remove("active");
+            document.getElementById("questionPage").classList.remove("page");
+            document.getElementById("questionPage").classList.add("active");
+        }, 700);
+    }
+}
+
+function createKeyboard(){
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+
+        const btn = document.createElement("button");
+        btn.textContent = letter;
+        btn.className = "letter-btn";
+
+        btn.onclick = () => {
+            guessed.push(letter);
+            btn.disabled = true;
+            renderWord();
+        };
+
+        keyboard.appendChild(btn);
+    });
+}
+
+function yesAnswer(){
+    document.getElementById("result").innerHTML =
+    "<strong>Best answer ever.</strong><br><br>I can't wait to make more memories with you.";
+}
+
+function noAnswer(){
+    document.getElementById("result").innerHTML =
+    "Thank you for being honest. No matter what, I appreciate you hearing me out.";
+}
+
+createKeyboard();
+renderWord();
+</script>
+
+</body>
+</html>
